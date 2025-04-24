@@ -1,12 +1,12 @@
-package kz.example.backend.virtualcollections.controllers;
+package kz.example.backend.virtualcollections.controller;
 
-import kz.example.backend.virtualcollections.entities.*;
-import kz.example.backend.virtualcollections.services.CollectionService;
+import kz.example.backend.virtualcollections.entity.*;
+import kz.example.backend.virtualcollections.service.CollectionService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.attribute.standard.Media;
 import java.util.List;
 
 /*
@@ -22,37 +22,15 @@ import java.util.List;
     GET /api/collections/{id}/comments - комментарии к коллекции +
     POST /api/collections/{id}/comments - добавление комментария +
     GET /api/collections/{id}/likes - количество лайков +
-    POST /api/collections/{id}/likes - лайк коллекции
+    POST /api/collections/{id}/likes - лайк коллекции +
 */
-
-/*Медиа-элементы (Media Items)
-GET /api/media - получение всех медиа
-GET /api/media/{id} - получение медиа по ID
-POST /api/media - загрузка нового медиа
-PUT /api/media/{id} - обновление информации о медиа
-DELETE /api/media/{id} - удаление медиа
-GET /api/media/{id}/tags - теги медиа
-POST /api/media/{id}/tags - добавление тега к медиа
-
-Дополнительные эндпоинты
-GET /api/content-types - получение всех типов контента
-GET /api/tags - получение всех тегов
-GET /api/achievement-types - получение типов достижений
-POST /api/users/{id}/follow - подписка на пользователя
-DELETE /api/users/{id}/follow - отписка от пользователя
-GET /api/search/collections - поиск по коллекциям
-GET /api/search/media - поиск по медиа
-GET /api/search/users - поиск пользователей*/
 
 @RestController
 @RequestMapping("/collections")
+@AllArgsConstructor
 public class CollectionController {
 
     private final CollectionService collectionService;
-
-    public CollectionController(CollectionService collectionService) {
-        this.collectionService = collectionService;
-    }
 
     @GetMapping
     public List<Collection> getAllCollections() {
@@ -121,8 +99,23 @@ public class CollectionController {
         return collectionService.addCollectionComment(comment);
     }
 
-    @GetMapping("/{id}/likes")
-    public Long getCollectionLikes(@PathVariable("id") Long id) {
+    @GetMapping("/{id}/likes/count")
+    public Long getCollectionLikesCount(@PathVariable("id") Long id) {
         return collectionService.getCollectionLikesCount(id);
+    }
+
+    @GetMapping("/{id}/likes")
+    public List<CollectionLike> getCollectionLikes(@PathVariable("id") Long id) {
+        return collectionService.getCollectionLikes(id);
+    }
+
+    @PostMapping("/{id}/likes")
+    public CollectionLike addCollectionLike(@PathVariable("id") Long id, @RequestBody CollectionLike like) {
+        Collection collection = collectionService.getCollectionById(id);
+        if (collection == null) {
+            throw new RuntimeException("Collection with ID: " + id + " not found");
+        }
+        like.setCollection(collection);
+        return collectionService.addCollectionLike(like);
     }
 }
