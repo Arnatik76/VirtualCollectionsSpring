@@ -1,4 +1,4 @@
-package kz.example.backend.virtualcollections.entities;
+package kz.example.backend.virtualcollections.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -18,7 +18,7 @@ public class CollectionComment {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "collection_comments_id_gen")
     @SequenceGenerator(name = "collection_comments_id_gen", sequenceName = "collection_comments_comment_id_seq", allocationSize = 1)
     @Column(name = "comment_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)

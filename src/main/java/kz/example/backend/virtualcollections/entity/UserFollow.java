@@ -1,7 +1,9 @@
-package kz.example.backend.virtualcollections.entities;
+package kz.example.backend.virtualcollections.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
@@ -12,7 +14,9 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "user_follows", schema = "virtualcollections")
+@Table(name = "user_follows", schema = "virtualcollections", catalog = "java")
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserFollow {
     @SequenceGenerator(name = "user_follows_id_gen", sequenceName = "tags_tag_id_seq", allocationSize = 1)
     @EmbeddedId

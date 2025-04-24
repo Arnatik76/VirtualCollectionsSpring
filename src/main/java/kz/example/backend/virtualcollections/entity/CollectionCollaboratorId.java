@@ -1,4 +1,4 @@
-package kz.example.backend.virtualcollections.entities;
+package kz.example.backend.virtualcollections.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -13,12 +14,13 @@ import java.util.Objects;
 @Setter
 @Embeddable
 public class CollectionCollaboratorId implements Serializable {
+    @Serial
     private static final long serialVersionUID = -4683693132144423010L;
     @Column(name = "collection_id", nullable = false)
-    private Integer collectionId;
+    private Long collectionId;
 
     @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    private Long userId;
 
     @Override
     public boolean equals(Object o) {

@@ -1,5 +1,4 @@
-// Язык: java
-package kz.example.backend.virtualcollections.entities;
+package kz.example.backend.virtualcollections.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "users", schema = "virtualcollections")
+@Table(name = "users", schema = "virtualcollections", catalog = "java")
 public class User {
 
     @Id

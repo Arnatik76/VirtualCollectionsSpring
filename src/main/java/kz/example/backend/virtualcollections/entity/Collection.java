@@ -1,12 +1,10 @@
-package kz.example.backend.virtualcollections.entities;
+package kz.example.backend.virtualcollections.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.OffsetDateTime;
 
@@ -19,7 +17,7 @@ public class Collection {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "collections_id_gen")
     @SequenceGenerator(name = "collections_id_gen", sequenceName = "collections_collection_id_seq", allocationSize = 1)
     @Column(name = "collection_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "title", nullable = false)
     private String title;

@@ -1,4 +1,4 @@
-package kz.example.backend.virtualcollections.entities;
+package kz.example.backend.virtualcollections.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
