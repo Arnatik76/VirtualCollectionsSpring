@@ -19,6 +19,14 @@ public class CollectionService {
     private final CollectionCommentRepository collectionCommentRepository;
     private final CollectionLikeRepository collectionLikeRepository;
 
+    // Collection
+    public Collection createCollection(Collection collection) {
+        if (collectionRepository.existsById(collection.getId())) {
+            throw new ResourceAlreadyExistException("Collection already exists");
+        }
+        return collectionRepository.save(collection);
+    }
+
     public List<Collection> getAllCollections() {
         return collectionRepository.getAllCollections()
                 .orElseThrow(() -> new ResourceNotFoundException("No collections found"));
@@ -28,10 +36,11 @@ public class CollectionService {
         return collectionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Collection not found with ID: " + id));
     }
 
-    public Collection createCollection(Collection collection) {
-        if (collectionRepository.existsById(collection.getId())) {
-            throw new ResourceAlreadyExistException("Collection already exists");
+    public Collection updateCollection(Long id, Collection collection) {
+        if (!collectionRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Collection not found with ID: " + id);
         }
+        collection.setId(id);
         return collectionRepository.save(collection);
     }
 
@@ -42,11 +51,25 @@ public class CollectionService {
         collectionRepository.deleteById(id);
     }
 
+    // CollectionItem
+    public CollectionItem addCollectionItem(CollectionItem item) {
+        if (collectionItemRepository.existsById(item.getId())) {
+            throw new ResourceAlreadyExistException("Item already exists");
+        }
+        return collectionItemRepository.save(item);
+    }
+
     public List<CollectionItem> getCollectionItems(Long id) {
-        return collectionItemRepository.getCollectionItemByUserId(id)
+        return collectionItemRepository.getCollectionItemByCollectionId(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No items found for this collection with ID: " + id));
     }
 
+    public List<CollectionComment> getCollectionItemsByCollectionId(Long id) {
+        return collectionCommentRepository.findCollectionItemsByCollectionId(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No comments found for this collection"));
+    }
+
+    // CollectionCollaborator
     public List<CollectionCollaborator> getCollectionCollaborators(Long id) {
         return collectionCollaboratorRepository.findCollectionCollaboratorByCollectionId(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No collaborators found for collection with ID: " + id));
@@ -59,11 +82,7 @@ public class CollectionService {
         return collectionCollaboratorRepository.save(collaborator);
     }
 
-    public List<CollectionComment> getCollectionItemsByCollectionId(Long id) {
-        return collectionCommentRepository.findCollectionItemsByCollectionId(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No comments found for this collection"));
-    }
-
+    // CollectionComment
     public CollectionComment addCollectionComment(CollectionComment comment) {
         if (collectionCommentRepository.existsById(comment.getId())) {
             throw new ResourceAlreadyExistException("Comment already exists");
@@ -71,6 +90,7 @@ public class CollectionService {
         return collectionCommentRepository.save(comment);
     }
 
+    // CollectionLike
     public Long getCollectionLikesCount(Long id) {
         return collectionLikeRepository.countCollectionLikesByCollectionId(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No likes found for collection with ID: " + id));
