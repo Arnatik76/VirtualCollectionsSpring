@@ -1,29 +1,21 @@
 package kz.example.backend.virtualcollections.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import kz.example.backend.virtualcollections.entity.*;
 import kz.example.backend.virtualcollections.service.CollectionService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-/*
-    GET /api/collections - получение всех коллекций +
-    GET /api/collections/{id} - получение коллекции по ID +
-    POST /api/collections - создание новой коллекции +
-    PUT /api/collections/{id} - обновление коллекции +
-    DELETE /api/collections/{id} - удаление коллекции +
-    GET /api/collections/{id}/items - получение элементов коллекции +
-    POST /api/collections/{id}/items - добавление элемента в коллекцию +
-    GET /api/collections/{id}/collaborators - получение соавторов +
-    POST /api/collections/{id}/collaborators - добавление соавтора +
-    GET /api/collections/{id}/comments - комментарии к коллекции +
-    POST /api/collections/{id}/comments - добавление комментария +
-    GET /api/collections/{id}/likes - количество лайков +
-    POST /api/collections/{id}/likes - лайк коллекции +
-*/
 
 @RestController
 @RequestMapping("/collections")
@@ -33,89 +25,101 @@ public class CollectionController {
     private final CollectionService collectionService;
 
     @GetMapping
-    public List<Collection> getAllCollections() {
-        return collectionService.getAllCollections();
+    public ResponseEntity<List<Collection>> getAllCollections() {
+        return ResponseEntity.ok(collectionService.getAllCollections());
     }
 
     @GetMapping("/{id}")
-    public Collection getCollectionById(@PathVariable("id") Long id) {
-        return collectionService.getCollectionById(id);
+    public ResponseEntity<Collection> getCollectionById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(collectionService.getCollectionById(id));
     }
 
     @PostMapping
-    public Collection createCollection(@RequestBody Collection collection) {
-        return collectionService.createCollection(collection);
+    @Operation(summary = "Создание новой коллекции",
+            description = "Создает новую коллекцию на основе переданных данных")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Коллекция успешно создана",
+                    content = @Content(schema = @Schema(implementation = Collection.class))),
+            @ApiResponse(responseCode = "400", description = "Некорректные данные"),
+            @ApiResponse(responseCode = "401", description = "Пользователь не аутентифицирован")
+    })
+    public ResponseEntity<Collection> createCollection(
+            @RequestBody @Valid @Parameter(description = "Данные для создания коллекции",
+                    required = true) Collection collection) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(collectionService.createCollection(collection));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Collection> updateCollection(@PathVariable("id") Long id, @RequestBody Collection collection) {
         Collection existingCollection = collectionService.getCollectionById(id);
-        if (existingCollection == null) {
-            return ResponseEntity.notFound().build();
-        }
-
         BeanUtils.copyProperties(collection, existingCollection, "id");
-
         return ResponseEntity.ok(collectionService.createCollection(existingCollection));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCollection(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteCollection(@PathVariable("id") Long id) {
         collectionService.deleteCollection(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/items")
-    public List<CollectionItem> getCollectionItems(@PathVariable("id") Long id) {
-        return collectionService.getCollectionItems(id);
+    public ResponseEntity<List<CollectionItem>> getCollectionItems(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(collectionService.getCollectionItems(id));
+    }
+
+    @PostMapping("/{id}/items")
+    public ResponseEntity<CollectionItem> addCollectionItem(@PathVariable("id") Long id, @RequestBody CollectionItem item) {
+        Collection collection = collectionService.getCollectionById(id);
+        item.setCollection(collection);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(collectionService.addCollectionItem(item));
     }
 
     @GetMapping("/{id}/collaborators")
-    public List<CollectionCollaborator> getCollectionCollaborators(@PathVariable("id") Long id) {
-        return collectionService.getCollectionCollaborators(id);
+    public ResponseEntity<List<CollectionCollaborator>> getCollectionCollaborators(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(collectionService.getCollectionCollaborators(id));
     }
 
     @PostMapping("/{id}/collaborators")
-    public CollectionCollaborator addCollectionCollaborator(@PathVariable("id") Long id, @RequestBody CollectionCollaborator collaborator) {
+    public ResponseEntity<CollectionCollaborator> addCollectionCollaborator(
+            @PathVariable("id") Long id, @RequestBody CollectionCollaborator collaborator) {
         Collection collection = collectionService.getCollectionById(id);
-        if (collection == null) {
-            throw new RuntimeException("Collection with ID: " + id + " not found");
-        }
         collaborator.setCollection(collection);
-        return collectionService.addCollectionCollaborator(collaborator);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(collectionService.addCollectionCollaborator(collaborator));
     }
 
     @GetMapping("/{id}/comments")
-    public List<CollectionComment> getCollectionComments(@PathVariable("id") Long id) {
-        return collectionService.getCollectionItemsByCollectionId(id);
+    public ResponseEntity<List<CollectionComment>> getCollectionComments(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(collectionService.getCollectionItemsByCollectionId(id));
     }
 
     @PostMapping("/{id}/comments")
-    public CollectionComment addCollectionComment(@PathVariable("id") Long id, @RequestBody CollectionComment comment) {
+    public ResponseEntity<CollectionComment> addCollectionComment(
+            @PathVariable("id") Long id, @RequestBody CollectionComment comment) {
         Collection collection = collectionService.getCollectionById(id);
-        if (collection == null) {
-            throw new RuntimeException("Collection with ID: " + id + " not found");
-        }
         comment.setCollection(collection);
-        return collectionService.addCollectionComment(comment);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(collectionService.addCollectionComment(comment));
     }
 
     @GetMapping("/{id}/likes/count")
-    public Long getCollectionLikesCount(@PathVariable("id") Long id) {
-        return collectionService.getCollectionLikesCount(id);
+    public ResponseEntity<Long> getCollectionLikesCount(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(collectionService.getCollectionLikesCount(id));
     }
 
     @GetMapping("/{id}/likes")
-    public List<CollectionLike> getCollectionLikes(@PathVariable("id") Long id) {
-        return collectionService.getCollectionLikes(id);
+    public ResponseEntity<List<CollectionLike>> getCollectionLikes(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(collectionService.getCollectionLikes(id));
     }
 
     @PostMapping("/{id}/likes")
-    public CollectionLike addCollectionLike(@PathVariable("id") Long id, @RequestBody CollectionLike like) {
+    public ResponseEntity<CollectionLike> addCollectionLike(
+            @PathVariable("id") Long id, @RequestBody CollectionLike like) {
         Collection collection = collectionService.getCollectionById(id);
-        if (collection == null) {
-            throw new RuntimeException("Collection with ID: " + id + " not found");
-        }
         like.setCollection(collection);
-        return collectionService.addCollectionLike(like);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(collectionService.addCollectionLike(like));
     }
 }
