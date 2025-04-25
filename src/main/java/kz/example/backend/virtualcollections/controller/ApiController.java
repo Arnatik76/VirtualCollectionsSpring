@@ -7,6 +7,7 @@ import kz.example.backend.virtualcollections.service.AchievementTypeService;
 import kz.example.backend.virtualcollections.service.ContentTypeService;
 import kz.example.backend.virtualcollections.service.TagService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,17 +31,17 @@ public class ApiController {
     private final AchievementTypeService achievementTypeService;
 
     @GetMapping("/content-types")
-    public List<ContentType> getContentTypes() {
-        return contentTypeService.getContentTypes();
+    public ResponseEntity<List<ContentType>> getContentTypes() {
+        return ResponseEntity.ok(contentTypeService.getContentTypes());
     }
 
     @GetMapping("/tags")
-    public List<Tag> getTags() {
-        return tagService.getTags();
+    public ResponseEntity<List<Tag>> getTags() {
+        return ResponseEntity.ok(tagService.getTags());
     }
 
     @GetMapping("/achievement-types")
-    public List<AchievementType> getAchievementTypes() {
-        return achievementTypeService.getAchievementTypes();
+    public ResponseEntity<List<AchievementType>> getAchievementTypes() {
+        return ResponseEntity.ok(achievementTypeService.getAchievementTypes());
     }
 }
