@@ -21,7 +21,7 @@ public class CollectionService {
 
     // Collection
     public Collection createCollection(Collection collection) {
-        if (collectionRepository.existsById(collection.getId())) {
+        if (collectionRepository.existsByTitle(collection.getTitle())) {
             throw new ResourceAlreadyExistException("Collection already exists");
         }
         return collectionRepository.save(collection);

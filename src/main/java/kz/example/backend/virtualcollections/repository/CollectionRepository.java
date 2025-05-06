@@ -15,4 +15,5 @@ public interface CollectionRepository extends JpaRepository<Collection, Long> {
     @Query("SELECT c FROM Collection c")
     Optional<List<Collection>> getAllCollections();
 
+    boolean existsByTitle(String title);
 }
