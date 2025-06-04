@@ -1,36 +1,36 @@
 # Virtual Collections Spring
 
-**Virtual Collections Spring** — это серверная часть платформы для управления виртуальными коллекциями. Проект предоставляет RESTful API для работы с коллекциями, медиа-элементами, пользователями и тегами.
+**Virtual Collections Spring** is the server part of the virtual collections management platform. The project provides a RESTful API for working with collections, media elements, users, and tags.
 
-## Основные возможности
+## Main features
 
-- Управление коллекциями (создание, обновление, удаление, добавление элементов).
-- Управление медиа-элементами.
-- Управление достижениями пользователей.
-- Поиск по коллекциям, медиа и пользователям.
-- Поддержка пользователей и их подписок.
+- Collection management (create, update, delete, add items).
+- Media element management.
+- Manage user achievements.
+- Search by collections, media, and users.
+- Support for users and their subscriptions.
 
-## Технологии, используемые в проекте
+## Technologies used in the project
 
-- **Язык:** Java 21
-- **Фреймворк:** Spring Boot 3.2.5
-    - Spring Data JPA для работы с базой данных.
-    - Spring Security для реализации безопасности.
-    - Spring Web для обработки HTTP-запросов.
-    - Spring Actuator для мониторинга состояния приложения.
-- **База данных:** PostgreSQL
-- **Документация API:** Springdoc OpenAPI + Swagger UI
-- **Система сборки:** Gradle
-- **Lombok:** для сокращения шаблонного кода.
+- **Language:** Java 21
+- **Framework:** Spring Boot 3.2.5
+    - Spring Data JPA for working with the database.
+    - Spring Security to implement security.
+    - Spring Web for processing HTTP requests.
+    - Spring Actuator for monitoring the application status.
+- **Database:** PostgreSQL
+- **API Documentation:** Springdoc OpenAPI + Swagger UI
+- **Assembly System:** Gradle
+- **Lombok:** to shorten the template code.
 
-## Установка и запуск
+## Installation and launch
 
-1. Склонируйте репозиторий:
-   git clone https://github.com/Arnatik76/VirtualCollectionsSpring.git
+1. Clone the repository:
+   `git clone https://github.com/Arnatik76/VirtualCollectionsSpring.git`
 
-2. Перейдите в папку проекта:
-   cd VirtualCollectionsSpring
+2. Go to the project folder:
+   `cd VirtualCollectionsSpring`
 
-3. Настройте подключение к базе данных в файле application.properties.
-4. Соберите проект и запустите:
-   ./gradlew bootRun
+3. Configure the database connection in the application.properties file.
+4. Assemble the project and run:
+`./gradlew bootRun`
